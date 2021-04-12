@@ -7,9 +7,7 @@ import SearchResults from './SearchResults';
 export default function MainSearchPage() {
   return (
     <Container className="m-4">
-      <Row>
-        <DropdownFilter />
-      </Row>
+      <DropdownFilter />
       <Row>
         <SearchInput />
       </Row>
