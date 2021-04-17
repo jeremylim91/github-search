@@ -7,7 +7,7 @@ body {
 }
 
 .react-autosuggest__input {
-  width: 240px;
+  width: 100%;
   height: 30px;
   padding: 10px 20px;
   font-family: Helvetica, sans-serif;
@@ -19,6 +19,10 @@ body {
 
 .react-autosuggest__input--focused {
   outline: none;
+}
+.react-autosuggest__input {
+  height: 2rem;
+  font-size: small;
 }
 
 .react-autosuggest__input--open {
@@ -43,6 +47,8 @@ body {
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
   z-index: 2;
+  height: 10rem;
+  overflow-y: scroll;
 }
 
 .react-autosuggest__suggestions-list {
@@ -60,7 +66,49 @@ body {
   background-color: #ddd;
 }
 
-.react-autosuggest__suggestion-match {
-  color: red;
+/* .react-autosuggest__suggestion-match {
+  color: purple;
   font-weight: bold;
+} */
+
+.dropdown-options-btn {
+  border: None;
+  background-color: transparent;
+}
+
+.background-video {
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+}
+
+.main-container {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+}
+
+.wrapper-div {
+  display: flex;
+  min-height: 100%;
+  min-height: 100vh;
+  align-items: center;
+  background-color: RGB(0, 0, 0, 0.8);
+}
+
+.container-wrapper {
+  display: block;
+  padding: 20%;
+  width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+  .background-video {
+    display: none;
+  }
+
+  .container-wrapper {
+    display: block;
+    padding: 5%;
+    width: 100%;
+  }
 }
