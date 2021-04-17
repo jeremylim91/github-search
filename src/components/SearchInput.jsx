@@ -6,7 +6,7 @@ import debounce from 'lodash.debounce';
 
 export default function SearchInput({queryConfigs}) {
   // destructure props
-  const {label, uri} = queryConfigs;
+  const {resourceName, label} = queryConfigs;
 
   // =========Set states=================
   const [suggestions, setSuggestions] = useState('');
@@ -73,7 +73,10 @@ export default function SearchInput({queryConfigs}) {
   // You already implemented this logic above, so just use it.
   // const debouncedVal = debounce(handleApiQuery(value, setSuggestions), 1000);
   const debouncedVal = useCallback(
-    debounce((currValue) => handleApiQuery(currValue, setSuggestions), 500),
+    debounce(
+      (currValue) => handleApiQuery(resourceName, currValue, setSuggestions),
+      500
+    ),
     []
   );
 

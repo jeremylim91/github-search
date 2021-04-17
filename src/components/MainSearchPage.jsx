@@ -3,32 +3,29 @@ import {Container, Row, Col, Button} from 'react-bootstrap';
 import DropdownFilter from './DropdownFilter';
 import SearchInput from './SearchInput';
 import AsyncPagination from './AsyncPagination';
-import {
-  QUERY_REPO,
-  QUERY_USER,
-  SEARCH_USERS_URI,
-  SEARCH_REPOS_URI,
-} from '../utils';
+import {REPOS, USERS, SEARCH_USERS_URI, SEARCH_REPOS_URI} from '../utils';
 
 export default function MainSearchPage() {
   // ===========useStates==================
-  const [queryMode, setQueryMode] = useState(QUERY_USER);
+  const [queryMode, setQueryMode] = useState(USERS);
 
   // based on the query mode, set the respective query URI and label (the lable prompts the user whether what to type in the input box)
   const getQueryConfigsAccordingToMode = (queryModes) => {
     switch (queryModes) {
-      case QUERY_USER:
-        return {uri: SEARCH_USERS_URI, label: 'Enter a username to begin'};
-      case QUERY_REPO:
-        return {uri: SEARCH_REPOS_URI, label: 'Enter a repo name'};
+      case USERS:
+        return {resourceName: USERS, label: 'Enter a username to begin'};
+      case REPOS:
+        return {resourceName: REPOS, label: 'Enter a repo to begin'};
       default:
-        return {uri: SEARCH_USERS_URI, label: 'Enter a username to begin'};
+        return {
+          resourceName: USERS,
+          label: 'Enter a username to begin',
+        };
     }
   };
 
   const queryConfigsAccordingToMode = getQueryConfigsAccordingToMode(queryMode);
 
-  console.log(queryConfigsAccordingToMode);
   return (
     <div className="wrapper-div">
       {/* <video autoPlay loop muted className="background-video">
