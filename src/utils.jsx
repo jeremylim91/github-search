@@ -1,11 +1,31 @@
 import axios from 'axios';
 
-const QUERY_REPO = 'query repo';
-const QUERY_USER = 'query user';
+export const USERS = 'users';
+export const REPOS = 'repos';
 
-export const queryTypeOptions = [QUERY_REPO, QUERY_USER];
+export const queryTypeOptions = [USERS, REPOS];
 
-const SEARCH_USERS_URI = 'https://api.github.com/search/users';
-const SEARCH_REPOS_URI = 'https://api.github.com/search/repo';
+// export const SEARCH_USERS_URI = 'https://api.github.com/search/users';
+// export const SEARCH_REPOS_URI = 'https://api.github.com/search/repo';
 
-export const handleApiQuery = () => {};
+const BACKEND_URL = 'http://localhost:3004';
+
+const Axios = axios.create({
+  withCredentials: true,
+  baseURL: BACKEND_URL,
+});
+
+export const handleApiQuery = (
+  resourceName,
+  query,
+  setSuggestions,
+  page = 1
+) => {
+  // make a request to the backend
+  Axios.get(`/${resourceName}/${query}`)
+    .then(({data}) => {
+      // use results BE to set suggestions
+      setSuggestions(data);
+    })
+    .catch((err) => console.log(err));
+};
