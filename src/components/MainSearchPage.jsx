@@ -2,8 +2,7 @@ import React, {useState} from 'react';
 import {Container, Row, Col, Button} from 'react-bootstrap';
 import DropdownFilter from './DropdownFilter';
 import SearchInput from './SearchInput';
-import AsyncPagination from './AsyncPagination';
-import {REPOS, USERS, SEARCH_USERS_URI, SEARCH_REPOS_URI} from '../utils';
+import {REPOS, USERS} from '../utils';
 
 export default function MainSearchPage() {
   // ===========useStates==================
