@@ -38,23 +38,24 @@ export default function SearchInput({queryConfigs}) {
 
   //===============================================
 
-  const handleDropdownClick = (suggestionDetails) => {
-    window.location.href = `${suggestionDetails.html_url}`;
-  };
+  // const handleDropdownClick = (suggestionDetails) => {
+  //   window.location.href = `${suggestionDetails.linkToSite}`;
+  // };
 
   // ================Autosuggest=======================
   // When suggestion is clicked, Autosuggest needs to populate the input
   // based on the clicked suggestion. Teach Autosuggest how to calculate the
   // input value for every given suggestion.
-  const getSuggestionValue = (suggestion) => suggestion.login;
+  const getSuggestionValue = (suggestion) => suggestion.title;
 
   // Use your imagination to render suggestions.
   const renderSuggestion = (suggestion) => (
     <button
       key={suggestion.id}
       className="dropdown-options-btn"
-      onClick={() => handleDropdownClick(suggestion)}>
-      {suggestion.login}
+      // onClick={() => handleDropdownClick(suggestion)}
+    >
+      {suggestion.title}
     </button>
   );
 
@@ -77,12 +78,12 @@ export default function SearchInput({queryConfigs}) {
       (currValue) => handleApiQuery(resourceName, currValue, setSuggestions),
       500
     ),
-    []
+    [resourceName]
   );
+  console.log(`resourceName is:`);
+  console.log(resourceName);
 
   const onSuggestionsFetchRequested = ({value: currValue}) => {
-    console.log(`currValue is:`);
-    console.log(currValue);
     // setSuggestions(getSuggestions(value));
     debouncedVal(currValue);
   };
@@ -98,6 +99,15 @@ export default function SearchInput({queryConfigs}) {
     value,
     onChange,
   };
+
+  // handle what happens when user selects a suggestion
+  const handleSugestionSelected = (
+    event,
+    {suggestion, suggestionValue, suggestionIndex, sectionIndex, method}
+  ) => {
+    console.log('handling suggestion');
+    window.location.href = `${suggestion.linkToSite}`;
+  };
   //===============================================
   return (
     <Form.Group>
@@ -111,6 +121,8 @@ export default function SearchInput({queryConfigs}) {
             getSuggestionValue={getSuggestionValue}
             renderSuggestion={renderSuggestion}
             inputProps={inputProps}
+            // This callback controls what happens when user clicks or presses 'enter' on a suggestion
+            onSuggestionSelected={handleSugestionSelected}
           />
           <Form.Text className="formText"> {label}</Form.Text>
         </Col>
