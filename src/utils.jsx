@@ -19,13 +19,17 @@ export const handleApiQuery = (
   resourceName,
   query,
   setSuggestions,
+  setIsLoading,
   page = 1
 ) => {
+  console.log(`resourceName in utils`);
+  console.log(resourceName);
   // make a request to the backend
   Axios.get(`/${resourceName}/${query}`)
     .then(({data}) => {
       // use results BE to set suggestions
       setSuggestions(data);
+      setIsLoading(false);
     })
     .catch((err) => console.log(err));
 };
