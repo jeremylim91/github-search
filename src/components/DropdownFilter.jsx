@@ -26,7 +26,7 @@ export default function DropdownFilter({queryMode, setQueryMode}) {
       </Col>
       <Col xs={7} md={5}>
         <Dropdown>
-          <Dropdown.Toggle variant="outline-primary" id="dropdown-basic">
+          <Dropdown.Toggle variant="outline-warning" id="dropdown-basic">
             {queryMode}
           </Dropdown.Toggle>
 
