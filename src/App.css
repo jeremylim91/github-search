@@ -1,3 +1,5 @@
+/* #857675 */
+
 body {
   font-family: Helvetica, sans-serif;
 }
@@ -29,7 +31,9 @@ body {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
-
+.react-autosuggest__suggestion {
+  width: 100% !important;
+}
 .react-autosuggest__suggestions-container {
   display: none;
 }
@@ -38,7 +42,7 @@ body {
   display: block;
   position: absolute;
   top: 51px;
-  width: 280px;
+  width: 40%;
   border: 1px solid #aaa;
   background-color: #fff;
   font-family: Helvetica, sans-serif;
@@ -78,27 +82,65 @@ body {
 
 .background-video {
   position: absolute;
-  z-index: -1;
-  width: 100%;
+  overflow-y: hidden;
+  /* width: 100%; */
+  height: 100%;
+  /* height: auto; */
 }
-
-.main-container {
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
+video {
+  object-fit: cover;
 }
 
 .wrapper-div {
   display: flex;
-  min-height: 100%;
-  min-height: 100vh;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
-  background-color: RGB(0, 0, 0, 0.8);
+  height: 100vh;
+  z-index: 5;
+}
+#root {
+  /* background-color: RGB(0, 0, 0, 0.8); */
+  z-index: -5;
+  background-color: #020827;
+  height: 100vh;
+  /* display: flex;
+  align-items: center; */
+}
+.main-container-default {
+  align-self: auto;
+  width: 70% !important;
+  padding: 36px 36px 36px !important;
+  background-color: rgba(155, 135, 135, 0.8);
+  color: white;
+  z-index: 5;
+}
+.main-container-with-table {
+  flex: 1 100%;
+  align-self: start !important;
+  /* justify-self: flex-start; */
+  display: block !important;
+  width: 100%;
+  padding: 15px 15px 15px !important;
+  background-color: rgba(155, 135, 135, 0.8);
+  color: white;
+  z-index: 5;
 }
 
-.container-wrapper {
-  display: block;
-  padding: 20%;
+.table-wrapper {
+  height: 500px;
+  overflow-y: scroll;
   width: 100%;
+  background-color: rgba(197, 197, 197, 0.8);
+  z-index: 5;
+}
+.table-wrapper-hidden {
+  display: none;
+}
+
+.avatar {
+  width: 2em;
+  margin-right: 1em;
 }
 
 @media only screen and (max-width: 768px) {
@@ -106,9 +148,11 @@ body {
     display: none;
   }
 
-  .container-wrapper {
-    display: block;
-    padding: 5%;
-    width: 100%;
+  .main-container-default {
+    width: 100% !important;
+  }
+
+  .react-autosuggest__suggestions-container--open {
+    width: 80% !important;
   }
 }
