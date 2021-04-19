@@ -1,46 +1,20 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {Form, Row, Col} from 'react-bootstrap';
+import React, {useState, useRef, useCallback} from 'react';
+import {Form, Col, Spinner} from 'react-bootstrap';
 import {handleApiQuery} from '../utils';
 import Autosuggest from 'react-autosuggest';
 import debounce from 'lodash.debounce';
 
-export default function SearchInput({queryConfigs}) {
+export default function SearchInput({queryConfigs, setTableData}) {
   // destructure props
   const {resourceName, label} = queryConfigs;
 
   // =========Set states=================
   const [suggestions, setSuggestions] = useState('');
   const [value, setValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  console.log(`suggestions is:`);
-  console.log(suggestions);
-
-  // Teach Autosuggest how to calculate suggestions for any given input value.
-  // const getSuggestions = (value) => {
-  //   console.log(`value in getSuggestions`);
-  //   console.log(value);
-  //   const inputValue = `${value}`.trim().toLowerCase();
-  //   const inputLength = inputValue.length;
-
-  //   return inputLength === 0
-  //     ? []
-  //     : suggestions.filter(
-  //         (suggestion) =>
-  //           suggestion.user.toLowerCase().slice(0, inputLength) === inputValue
-  //       );
-  // };
-
-  // ========API QUERY=============================
-  // Whenever value changes, make an api req that returns autocomplete suggestions based on the user input
-  // useEffect(() => {
-  //   handleApiQuery(value, setSuggestions);
-  // }, [value]);
-
-  //===============================================
-
-  // const handleDropdownClick = (suggestionDetails) => {
-  //   window.location.href = `${suggestionDetails.linkToSite}`;
-  // };
+  // set a useRef to get the html element
+  const elSelector = useRef(null);
 
   // ================Autosuggest=======================
   // When suggestion is clicked, Autosuggest needs to populate the input
@@ -48,44 +22,46 @@ export default function SearchInput({queryConfigs}) {
   // input value for every given suggestion.
   const getSuggestionValue = (suggestion) => suggestion.title;
 
-  // Use your imagination to render suggestions.
-  const renderSuggestion = (suggestion) => (
-    <button
-      key={suggestion.id}
-      className="dropdown-options-btn"
-      // onClick={() => handleDropdownClick(suggestion)}
-    >
-      {suggestion.title}
-    </button>
-  );
+  // Render suggestions
+  const renderSuggestion = (suggestion) => {
+    if (isLoading === true)
+      return (
+        <div className="spinner-wrapper">
+          <Spinner className="mt-2 ml-3" animation="border" variant="primary" />
+        </div>
+      );
+
+    return (
+      <button key={suggestion.id} className="dropdown-options-btn">
+        {suggestion.avatar ? (
+          <img src={suggestion.avatar} alt="avatar" className="avatar" />
+        ) : null}
+        {suggestion.title}
+      </button>
+    );
+  };
 
   const onChange = (event, {newValue}) => {
     setValue(newValue);
   };
 
-  // strategy to solve rate limiter
-  /*
-  1. after first key stroke,trigger a countdown timer
-  2. if there are subsequent key strokes, reset this timer
-  3. when the timer hits 0, trigger an api request
-  */
+  // Autosuggest calls this fn every time you need to update suggestions.
 
-  // Autosuggest will call this function every time you need to update suggestions.
-  // You already implemented this logic above, so just use it.
-  // const debouncedVal = debounce(handleApiQuery(value, setSuggestions), 1000);
+  // debounce only fires an api query after x milliseconds of nil user input to the input box, thus helping to avoid hitting the rate limiter
   const debouncedVal = useCallback(
     debounce(
-      (currValue) => handleApiQuery(resourceName, currValue, setSuggestions),
-      500
+      (currValue) =>
+        handleApiQuery(resourceName, currValue, setSuggestions, setIsLoading),
+      1000
     ),
     [resourceName]
   );
-  console.log(`resourceName is:`);
-  console.log(resourceName);
-
+  //
   const onSuggestionsFetchRequested = ({value: currValue}) => {
-    // setSuggestions(getSuggestions(value));
+    if (isLoading === false) setIsLoading(true);
     debouncedVal(currValue);
+
+    // debouncedVal(currValue);
   };
 
   // Autosuggest will call this function every time you need to clear suggestions.
@@ -95,7 +71,7 @@ export default function SearchInput({queryConfigs}) {
 
   // Autosuggest will pass through all these props to the input.
   const inputProps = {
-    placeholder: 'Enter your query',
+    placeholder: 'Your query...',
     value,
     onChange,
   };
@@ -105,28 +81,41 @@ export default function SearchInput({queryConfigs}) {
     event,
     {suggestion, suggestionValue, suggestionIndex, sectionIndex, method}
   ) => {
-    console.log('handling suggestion');
     window.location.href = `${suggestion.linkToSite}`;
+  };
+
+  // If the user presses "enter" without choosing any of the suggestions, query the db to get related data, then render a table
+  const handleSubmit = (event) => {
+    // Stop the page from refreshing
+    event.preventDefault();
+    // grab hold of the value entered in the input box
+    const userInput = elSelector.current.input.value;
+    // use the above to query db then render table results
+    handleApiQuery(resourceName, userInput, setTableData);
+    // move the serach box to the top of the screen
+    // render a table of all suggestions
   };
   //===============================================
   return (
-    <Form.Group>
-      <Row>
-        <Col xs={12}>
+    <Form onSubmit={handleSubmit}>
+      <Form.Row>
+        <Form.Group as={Col} xs={12} controlId="col">
           <Form.Label>Search Github</Form.Label>
           <Autosuggest
-            suggestions={suggestions}
+            ref={elSelector}
+            suggestions={isLoading ? [''] : suggestions}
             onSuggestionsFetchRequested={onSuggestionsFetchRequested}
             onSuggestionsClearRequested={onSuggestionsClearRequested}
             getSuggestionValue={getSuggestionValue}
             renderSuggestion={renderSuggestion}
             inputProps={inputProps}
+            // decides when to run the render fn
             // This callback controls what happens when user clicks or presses 'enter' on a suggestion
             onSuggestionSelected={handleSugestionSelected}
           />
           <Form.Text className="formText"> {label}</Form.Text>
-        </Col>
-      </Row>
-    </Form.Group>
+        </Form.Group>
+      </Form.Row>
+    </Form>
   );
 }
